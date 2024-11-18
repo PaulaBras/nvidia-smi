@@ -21,10 +21,14 @@ This plugin provides comprehensive monitoring for NVIDIA GPUs using the `nvidia-
 - Python 3.x
 - `nvidia-smi` command-line tool
 
-## Installation
-1. Place the agent script in your CheckMK agent plugins directory
-2. Place the server plugin in your CheckMK local plugins directory
-3. Restart CheckMK service
+### Installation
+
+- Login Check_MK Server
+- Download the latest release plugin
+- Run `mkp install nvidia-smi-3.0.mkp`
+- Run `mkp list nvidia_smi`
+- Copy the `agents/plugins/nvidia_smi` to `~/local/lib/check_mk/base/plugins/agent_based/nvidia_smi`
+- Run hosts full scan
 
 ## Metrics Collected
 - GPU ID
