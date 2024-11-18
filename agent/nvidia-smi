@@ -1,0 +1,115 @@
+from subprocess import Popen, PIPE
+import xml.dom.minidom
+from functools import reduce
+
+print("<<<nvidia_smi>>>")
+i = 0
+nvidiaSMI = xml.dom.minidom.parseString(Popen(["nvidia-smi", "-q", "-x"], stdout=PIPE).communicate()[0])
+
+for gpu in nvidiaSMI.getElementsByTagName('gpu'):
+    try:
+        gpu_id = int(gpu
+                    .getElementsByTagName("minor_number")[0]
+                    .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        gpu_id = i
+
+    try:
+        names = list(gpu
+                    .getElementsByTagName("product_name")[0]
+                    .childNodes[0].data.split())
+        gpu_name = reduce(lambda x,y:x+y,names)
+    except (IndexError, ValueError):
+        gpu_name = "Unknown"
+
+    try:
+        fan_speed = int(gpu
+                        .getElementsByTagName("fan_speed")[0]
+                        .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        fan_speed = 0
+
+    try:
+        gpu_utilization = int(gpu
+                            .getElementsByTagName("utilization")[0]
+                            .getElementsByTagName("gpu_util")[0]
+                            .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        gpu_utilization = 0
+
+    try:
+        mem_utilization = int(gpu
+                            .getElementsByTagName("utilization")[0]
+                            .getElementsByTagName("memory_util")[0]
+                            .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        mem_utilization = 0
+
+    try:
+        ecc_errors_1 = str(gpu
+                        .getElementsByTagName("ecc_errors")[0]
+                        .getElementsByTagName("aggregate")[0]
+                        .getElementsByTagName("single_bit")[0]
+                        .getElementsByTagName("total")[0]
+                        .childNodes[0].data)
+    except (IndexError, ValueError):
+        ecc_errors_1 = "0"
+
+    try:
+        ecc_errors_2 = str(gpu
+                        .getElementsByTagName("ecc_errors")[0]
+                        .getElementsByTagName("aggregate")[0]
+                        .getElementsByTagName("double_bit")[0]
+                        .getElementsByTagName("total")[0]
+                        .childNodes[0].data)
+    except (IndexError, ValueError):
+        ecc_errors_2 = "0"
+
+    try:
+        temperature = int(gpu
+                        .getElementsByTagName("temperature")[0]
+                        .getElementsByTagName("gpu_temp")[0]
+                        .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        temperature = 0
+
+    try:
+        power_draw = float(gpu
+                        .getElementsByTagName("gpu_power_readings")[0]
+                        .getElementsByTagName("power_draw")[0]
+                        .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        power_draw = 0.0
+
+    try:
+        power_limit = float(gpu
+                        .getElementsByTagName("gpu_power_readings")[0]
+                        .getElementsByTagName("current_power_limit")[0]
+                        .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        power_limit = 0.0
+
+    try:
+        current_memory_usage = int(gpu
+                        .getElementsByTagName("fb_memory_usage")[0]
+                        .getElementsByTagName("used")[0]
+                        .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        current_memory_usage = 0
+
+    try:
+        max_memory = int(gpu
+                        .getElementsByTagName("fb_memory_usage")[0]
+                        .getElementsByTagName("total")[0]
+                        .childNodes[0].data.split()[0])
+    except (IndexError, ValueError):
+        max_memory = 0
+
+    try:
+        num_processes = len(gpu.getElementsByTagName("processes")[0].getElementsByTagName("process_info"))
+    except (IndexError, ValueError):
+        num_processes = 0
+
+    print(f"{gpu_id} {gpu_name} {fan_speed} {gpu_utilization} {mem_utilization} {ecc_errors_1} {ecc_errors_2} {temperature} {power_draw} {power_limit} {current_memory_usage} {max_memory} {num_processes}")
+
+    i += 1
