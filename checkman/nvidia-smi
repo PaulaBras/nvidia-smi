@@ -1,0 +1,49 @@
+title: Performance Indicators of NVIDIA GPU
+agents: linux
+catalog: app/gpu
+license: MIT
+distribution: check_mk
+description: >
+ Comprehensive monitoring of NVIDIA GPUs using the nvidia-smi command.
+ 
+ Monitors key performance metrics including:
+ - GPU Utilization
+ - Memory Utilization
+ - Fan Speed
+ - Temperature
+ - ECC Errors (Single and Double Bit)
+ - Power Consumption (Draw and Limit)
+ - Memory Usage
+ - Number of Active Processes
+
+ Provides detailed insights into GPU performance and health.
+
+inventory: >
+ One service per NVIDIA GPU will be created.
+
+item: >
+ Each item represents a unique NVIDIA GPU, identified by its GPU ID.
+
+parameters:
+ gpu_utilization_levels:
+   - warning
+   - critical
+ memory_utilization_levels:
+   - warning
+   - critical
+ temperature_levels:
+   - warning
+   - critical
+ fan_speed_levels:
+   - warning
+   - critical
+ power_draw_levels:
+   - warning
+   - critical
+
+default_levels:
+ gpu_utilization_levels: [80, 90]
+ memory_utilization_levels: [80, 90]
+ temperature_levels: [75, 85]
+ fan_speed_levels: [70, 85]
+ power_draw_levels: [200, 250]
