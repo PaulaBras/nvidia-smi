@@ -52,7 +52,7 @@ def check_nvidia_smi_fan(item: str, section) -> CheckResult:
     try:
         fan_speed = int(data['fan_speed'])
         yield Metric('fan', fan_speed, levels=(90, 95))
-        
+
         if fan_speed > 95:
             yield Result(state=State.CRIT, summary=f"{data['name']} fan speed is {fan_speed}%")
         elif fan_speed > 90:
@@ -97,7 +97,7 @@ def check_nvidia_smi_memory(item: str, section) -> CheckResult:
         memory_percent = current_memory / max_memory * 100
 
         yield Metric('memory_usage', current_memory, levels=(max_memory * 0.8, max_memory * 0.9))
-        
+
         if memory_percent > 90:
             yield Result(state=State.CRIT, summary=f"{data['name']} memory usage is {current_memory}MiB out of {max_memory}MiB ({memory_percent:.1f}%)")
         elif memory_percent > 80:
@@ -121,7 +121,7 @@ def check_nvidia_smi_processes(item: str, section) -> CheckResult:
     try:
         num_processes = int(data['num_processes'])
         yield Metric('num_processes', num_processes, levels=(10, 20))
-        
+
         if num_processes > 20:
             yield Result(state=State.CRIT, summary=f"{data['name']} has {num_processes} running processes")
         elif num_processes > 10:
@@ -145,10 +145,15 @@ def check_nvidia_smi_power(item: str, section) -> CheckResult:
     try:
         power_draw = float(data['power_draw'])
         power_limit = float(data['power_limit'])
-        power_percent = power_draw / power_limit * 100
-
-        yield Metric('power_draw', power_draw, levels=(power_limit * 0.8, power_limit * 0.9))
         
+        if power_limit == 0:
+            yield Result(state=State.OK, summary=f"{data['name']} power usage is {power_draw:.1f}W (no power limit set)")
+            yield Metric('power_draw', power_draw)
+            return
+
+        power_percent = power_draw / power_limit * 100
+        yield Metric('power_draw', power_draw, levels=(power_limit * 0.8, power_limit * 0.9))
+
         if power_percent > 90:
             yield Result(state=State.CRIT, summary=f"{data['name']} power usage is {power_draw:.1f}W out of {power_limit:.1f}W ({power_percent:.1f}%)")
         elif power_percent > 80:
@@ -172,7 +177,7 @@ def check_nvidia_smi_temperature(item: str, section) -> CheckResult:
     try:
         temperature = int(data['temperature'])
         yield Metric('temperature', temperature, levels=(80, 90))
-        
+
         if temperature > 90:
             yield Result(state=State.CRIT, summary=f"{data['name']} temperature is {temperature}°C")
         elif temperature > 80:
