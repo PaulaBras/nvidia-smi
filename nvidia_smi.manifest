@@ -3,13 +3,13 @@
  'download_url': 'https://git.pabr.de/paul/nvidia-smi-plugin',
   'files': {
       'agent_based': ['nvidia_smi.py'],
-      'agents': ['nvidia-smi'],
+      'agents': ['plugins/nvidia-smi'],
       'checkman': ['nvidia-smi'],
       'web': ['plugins/metrics/nvidia-smi.py']
   },
  'name': 'nvidia_smi',
  'title': 'nvidia_smi',
- 'version': '1.0.3',
+ 'version': '1.0.4',
  'version.min_required': '2.4.0p5',
  'version.packaged': 'cmk-mkp-tool 0.2.0',
  'version.usable_until': None}
